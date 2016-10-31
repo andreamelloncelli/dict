@@ -55,7 +55,16 @@ microbenchmark(
                      name2 = "Sepal.proportion", val2 = "Sepal.Length * Sepal.Width"),
   proportion_new_way(iris,
                      name1 = "Petal.proportion", val1 = "Petal.Length * Petal.Width",
-                     name2 = "Sepal.proportion", val2 = "Sepal.Length * Sepal.Width")
+                     name2 = "Sepal.proportion", val2 = "Sepal.Length * Sepal.Width"),
+  times = 1000
+)
+identical(
+  proportion_old_way(iris,
+                     name1 = "Petal.proportion", val1 = "Petal.Length * Petal.Width",
+                     name2 = "Sepal.proportion", val2 = "Sepal.Length * Sepal.Width"),
+  proportion_new_way(iris,
+                     name1 = "Petal.proportion", val1 = "Petal.Length * Petal.Width",
+                     name2 = "Sepal.proportion", val2 = "Sepal.Length * Sepal.Width"),
 )
 
 ###############################################################
@@ -64,6 +73,7 @@ fun <- compiler::comfun(fun)
 evalStringVec <- compiler::cmpfun(evalStringVec)
 listToDict <- compiler::cmpfun(listToDict)
 dict <- compiler::cmpfun(dict)
+dict2 <- compiler::cmpfun(dict2)
 
 name1 = "Petal.proportion"
 val1 = "Petal.Length * Petal.Width"
@@ -80,6 +90,16 @@ microbenchmark(
   list<- dict(
     name1 = val1,
     name2 = val2
-  )
+  ),
+  list<- dict2(
+    c(name1, val1),
+    c(name2, val2)
+  ),
+  {
+    list <- list()
+    list[[name1]] <- val1
+    list[[name2]] <- val2
+    list
+  },
+  times = 1000
 )
-dict

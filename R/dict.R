@@ -1,4 +1,4 @@
-fun <- function(x, env ) {  eval( parse(text= x ), envir = env ) 	 }
+fun <- function(x, env ) {  eval( as.name( x ) , envir = env ) 	 }
 
 evalStringVec <- function( vec, env = parent.frame() ) {
 	resultingList <- lapply(X = vec, FUN =  fun, env = env)
@@ -15,4 +15,3 @@ dict <- function(...) {
   namedList <- list(...)
   listToDict(namedList = namedList, env = parent.frame() )
 }
-
