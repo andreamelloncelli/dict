@@ -98,4 +98,3 @@ test_that("dict of list of two elements",{
   expect_identical(namedList,expectedResult)
 
 })
-
