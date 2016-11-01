@@ -1,3 +1,6 @@
+###############################################################
+### library and data loading
+
 library(dplyr)
 library(dict)
 
@@ -6,11 +9,22 @@ data("iris")
 iris <- tbl_df(iris)
 iris
 
+###############################################################
+### premise
+###
+### The goal of this tool is to have more readability in code
+### using dplyr using standard evaluation SE
+
 ## NSE
-iris_proportion <- iris %>% mutate(Petal.proportion = Petal.Length * Petal.Width, Sepal.proportion = Sepal.Length * Sepal.Width)
+iris_proportion <-
+  iris %>%
+  mutate(Petal.proportion = Petal.Length / Petal.Width, Sepal.proportion = Sepal.Length / Sepal.Width)
 
 ## SE
-list <- list(Petal.proportion = "Petal.Length * Petal.Width", Sepal.proportion = "Sepal.Length * Sepal.Width")
+list <- list(
+    Petal.proportion = "Petal.Length / Petal.Width",
+    Sepal.proportion = "Sepal.Length / Sepal.Width")
+
 mutate_(iris, .dots= list)
 
 
@@ -27,8 +41,11 @@ proportion_old_way <- function(df, name1 , val1, name2, val2) {
 }
 
 proportion_old_way(iris,
-                   name1 = "Petal.proportion", val1 = "Petal.Length * Petal.Width",
-                   name2 = "Sepal.proportion", val2 = "Sepal.Length * Sepal.Width")
+                   name1 = "Petal.proportion", val1 = "Petal.Length / Petal.Width",
+                   name2 = "Sepal.proportion", val2 = "Sepal.Length / Sepal.Width")
+
+### Now we wanto to write the last function (proportion_old_way) in a new
+### way, more readable using the dict function
 
 # SE in function with dict
 proportion_new_way <- function(df, name1 , val1, name2, val2) {
@@ -41,44 +58,42 @@ proportion_new_way <- function(df, name1 , val1, name2, val2) {
 }
 
 proportion_new_way(iris,
-                   name1 = "Petal.proportion", val1 = "Petal.Length * Petal.Width",
-                   name2 = "Sepal.proportion", val2 = "Sepal.Length * Sepal.Width")
+                   name1 = "Petal.proportion", val1 = "Petal.Length / Petal.Width",
+                   name2 = "Sepal.proportion", val2 = "Sepal.Length / Sepal.Width")
 
 ###############################################################
-## benchmark of the whole datamanipulation
+### benchmark of the whole datamanipulation
 
 ##install.packages("microbenchmark")
 require(microbenchmark)
 microbenchmark(
   proportion_old_way(iris,
-                     name1 = "Petal.proportion", val1 = "Petal.Length * Petal.Width",
-                     name2 = "Sepal.proportion", val2 = "Sepal.Length * Sepal.Width"),
+                     name1 = "Petal.proportion", val1 = "Petal.Length / Petal.Width",
+                     name2 = "Sepal.proportion", val2 = "Sepal.Length / Sepal.Width"),
   proportion_new_way(iris,
-                     name1 = "Petal.proportion", val1 = "Petal.Length * Petal.Width",
-                     name2 = "Sepal.proportion", val2 = "Sepal.Length * Sepal.Width"),
+                     name1 = "Petal.proportion", val1 = "Petal.Length / Petal.Width",
+                     name2 = "Sepal.proportion", val2 = "Sepal.Length / Sepal.Width"),
   times = 1000
 )
 identical(
   proportion_old_way(iris,
-                     name1 = "Petal.proportion", val1 = "Petal.Length * Petal.Width",
-                     name2 = "Sepal.proportion", val2 = "Sepal.Length * Sepal.Width"),
+                     name1 = "Petal.proportion", val1 = "Petal.Length / Petal.Width",
+                     name2 = "Sepal.proportion", val2 = "Sepal.Length / Sepal.Width"),
   proportion_new_way(iris,
-                     name1 = "Petal.proportion", val1 = "Petal.Length * Petal.Width",
-                     name2 = "Sepal.proportion", val2 = "Sepal.Length * Sepal.Width"),
+                     name1 = "Petal.proportion", val1 = "Petal.Length / Petal.Width",
+                     name2 = "Sepal.proportion", val2 = "Sepal.Length / Sepal.Width")
 )
 
 ###############################################################
-## benchmark of making a named list
-fun <- compiler::comfun(fun)
-evalStringVec <- compiler::cmpfun(evalStringVec)
-listToDict <- compiler::cmpfun(listToDict)
-dict <- compiler::cmpfun(dict)
-dict2 <- compiler::cmpfun(dict2)
+### benchmark of making a named list
+###
+### Now benchmarking the dict new function in comparison to the
+### old behaviour and other two methods
 
 name1 = "Petal.proportion"
-val1 = "Petal.Length * Petal.Width"
+val1 = "Petal.Length / Petal.Width"
 name2 = "Sepal.proportion"
-val2 = "Sepal.Length * Sepal.Width"
+val2 = "Sepal.Length / Sepal.Width"
 microbenchmark(
   list <- setNames(
     list(
@@ -101,5 +116,5 @@ microbenchmark(
     list[[name2]] <- val2
     list
   },
-  times = 1000
+  times = 10000
 )
