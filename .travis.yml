@@ -3,7 +3,8 @@
 language: R
 sudo: false
 cache: packages
-
+# warnings
+warnings_are_errors: false
 # to avoid the error: "Package vignette without corresponding PDF/HTML"
 env:
   global:
