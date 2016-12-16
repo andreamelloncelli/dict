@@ -5,6 +5,9 @@ sudo: false
 cache: packages
 # warnings
 warnings_are_errors: false
+# coverage
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
 # to avoid the error: "Package vignette without corresponding PDF/HTML"
 env:
   global:
