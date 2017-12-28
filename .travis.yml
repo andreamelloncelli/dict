@@ -6,8 +6,13 @@ cache: packages
 # warnings
 warnings_are_errors: false
 # coverage
+r_packages:
+  - covr
 after_success:
-  - bash <(curl -s https://codecov.io/bash)
+  - Rscript -e 'library(covr); codecov()'
+##after_success:
+##  - bash <(curl -s https://codecov.io/bash)
+
 # to avoid the error: "Package vignette without corresponding PDF/HTML"
 env:
   global:
